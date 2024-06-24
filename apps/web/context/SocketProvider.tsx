@@ -48,7 +48,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const _socket = io("http://localhost:8000");
 
     _socket.on("connect", () => {
-      setSocketId(_socket.id);
+      setSocketId(_socket.id ?? null); // Ensure socket.id is not undefined
       console.log("_socket.id", _socket.id);
 
       _socket.on("message", onMsgRcv);

@@ -72,8 +72,14 @@ export default function Page() {
                 borderRadius: '0.5rem',
                 cursor: 'pointer',
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#3182ce'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#4299e1'}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = '#3182ce';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = '#4299e1';
+              }}
             >
               Send Message
             </button>
@@ -102,8 +108,14 @@ export default function Page() {
                 borderRadius: '0.5rem',
                 cursor: 'pointer',
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#3182ce'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#4299e1'}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = '#3182ce';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = '#4299e1';
+              }}
             >
               Join Room
             </button>
