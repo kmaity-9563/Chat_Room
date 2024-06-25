@@ -20,48 +20,69 @@ const sub = new Redis({
 class SocketServices {
   private _io: Server;
 
-  constructor() {
+  constructor(httpServer: any) {
     console.log("Initializing socket server...");
-    this._io = new Server({
+    this._io = new Server(httpServer, {
       cors: {
-        allowedHeaders: ["*"],
-        origin: "*"
+        origin: "*",
+        methods: ["GET", "POST"]
       }
     });
-    sub.subscribe("MESSAGE");
+    sub.subscribe("MESSAGE", (err) => {
+      if (err) {
+        console.error("Failed to subscribe to MESSAGE channel", err);
+      } else {
+        console.log("Subscribed to MESSAGE channel");
+      }
+    });
     this.setupRedisListener();
   }
 
   private setupRedisListener() {
     sub.on("message", async (channel, message) => {
       if (channel === "MESSAGE") {
-        const { message: msg, roomId } = JSON.parse(message);
-        console.log("Message in Redis subscriber", message);
+        try {
+          const { message: msg, roomId } = JSON.parse(message);
+          console.log("Message received from Redis", message);
 
-        if (roomId && roomId.trim() !== "") {
-          this._io.to(roomId).emit("message", JSON.stringify({ message: msg }));
-        } else {
-          this._io.emit("message", JSON.stringify({ message: msg }));
+          if (roomId && roomId.trim() !== "") {
+            this._io.to(roomId).emit("message", { message: msg });
+          } else {
+            this._io.emit("message", { message: msg });
+          }
+
+          await produceMessage(msg);
+        } catch (error) {
+          console.error("Error processing message from Redis", error);
         }
-
-        await produceMessage(msg);
       }
     });
   }
 
   public initListeners() {
-    const io = this.io;
-    io.on("connect", (socket) => {
+    this._io.on("connection", (socket) => {
       console.log("New socket connected", socket.id);
 
       socket.on("join-room", async ({ roomId }: { roomId: string }) => {
-        await socket.join(roomId);
-        console.log(`Socket ${socket.id} joined room ${roomId}`);
+        if (roomId && roomId.trim() !== "") {
+          await socket.join(roomId);
+          console.log(`Socket ${socket.id} joined room ${roomId}`);
+        } else {
+          console.error(`Invalid roomId provided by socket ${socket.id}`);
+        }
       });
 
       socket.on("event:message", async ({ message, roomId }: { message: string, roomId: string }) => {
-        console.log("Message before publishing to Redis", message);
-        await pub.publish("MESSAGE", JSON.stringify({ message, roomId }));
+        if (message && roomId) {
+          console.log("Publishing message to Redis", message);
+          await pub.publish("MESSAGE", JSON.stringify({ message, roomId }));
+        } else {
+          console.error("Invalid message or roomId");
+        }
+      });
+
+      socket.on("disconnect", () => {
+        console.log(`Socket ${socket.id} disconnected`);
       });
     });
   }
