@@ -1,3 +1,8 @@
+# Demo
+https://github.com/kmaity-9563/Chat_Room/assets/75235204/482ed608-109b-4771-8bff-67a7b1d26438
+# Architecture
+![chat-system-architect](https://github.com/kmaity-9563/Chat_Room/assets/75235204/e80a4519-4c2f-4902-b19e-a446e16f134a)
+
 # Turborepo starter
 
 This is an official starter Turborepo.
@@ -80,4 +85,4 @@ Learn more about the power of Turborepo:
 - [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
 - [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
 
-https://github.com/kmaity-9563/Chat_Room/assets/75235204/482ed608-109b-4771-8bff-67a7b1d26438
+
